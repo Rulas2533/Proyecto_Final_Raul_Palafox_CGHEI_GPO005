@@ -1,7 +1,7 @@
-//Palafox Jimenez Raúl
-//Practica 11
+//Proyecto Final
 //422132844
-//31 de Octubre de 2025
+//CGEIH Grupo 5
+//Palafox Jimenez Raúl 
 #include <iostream>
 #include <cmath>
 #include <string>
@@ -36,6 +36,7 @@ void UpdateDoorAnimation();
 void UpdateWindowsAnimation();
 void UpdateBellAnimation();
 void UpdateSignAnimation();
+void UpdateCortinasAnimation();
 
 // Window dimensions
 const GLuint WIDTH = 800, HEIGHT = 600;
@@ -84,11 +85,22 @@ float signRotationSpeed = 2.0f;
 int signAnimationPhase = 0;
 bool showSign1 = true; // true = mostrar letrero "OPEN", false = mostrar letrero "CLOSED"
 
+// Variables para animación de cortinas
+bool cortinasAnimationActive = false;
+float cortinasScaleX = 1.0f;
+float cortinasTargetScale = 3.5f;
+float cortinasScaleSpeed = 2.0f;
+bool cortinasAreScaled = false;
+
 // Pivotes de las ventanas
 const glm::vec3 V1_PIVOT = glm::vec3(-9.390120f, 10.340143f, -3.639997f);
 const glm::vec3 V2_PIVOT = glm::vec3(-3.039997f, 10.340143f, -3.639997f);
 const glm::vec3 V3_PIVOT = glm::vec3(-1.729999f, 10.340143f, -3.639997f);
 const glm::vec3 V4_PIVOT = glm::vec3(4.180001f, 10.340143f, -3.639997f);
+
+// Pivotes de las cortinas
+const glm::vec3 CORTINA1_PIVOT = glm::vec3(4.89717f, 11.3683f, -5.17732f);
+const glm::vec3 CORTINA2_PIVOT = glm::vec3(-10.2291f, 11.4903f, -5.18742f);
 
 // posiciones luces
 glm::vec3 pointLightPositions[] = {
@@ -285,6 +297,32 @@ void UpdateSignAnimation() {
 	}
 }
 
+// Función para actualizar la animación de las cortinas
+void UpdateCortinasAnimation() {
+	if (!cortinasAnimationActive) return;
+
+	if (!cortinasAreScaled) {
+		// Escalando las cortinas (abriendo)
+		cortinasScaleX += cortinasScaleSpeed * deltaTime;
+		if (cortinasScaleX >= cortinasTargetScale) {
+			cortinasScaleX = cortinasTargetScale;
+			cortinasAnimationActive = false;
+			cortinasAreScaled = true;
+			std::cout << "Cortinas ABIERTAS (Escala: " << cortinasScaleX << ")" << std::endl;
+		}
+	}
+	else {
+		// Regresando a escala normal (cerrando)
+		cortinasScaleX -= cortinasScaleSpeed * deltaTime;
+		if (cortinasScaleX <= 1.0f) {
+			cortinasScaleX = 1.0f;
+			cortinasAnimationActive = false;
+			cortinasAreScaled = false;
+			std::cout << "Cortinas CERRADAS (Escala: 1.0)" << std::endl;
+		}
+	}
+}
+
 int main()
 {
 	// Init GLFW
@@ -297,7 +335,7 @@ int main()
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);*/
 
 	// Create a GLFWwindow object that we can use for GLFW's functions
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Modelos Estáticos - Palafox Raúl", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Proyecto Final - Palafox Jimenez Raúl", nullptr, nullptr);
 
 	if (nullptr == window)
 	{
@@ -348,7 +386,6 @@ int main()
 	Model frascos((char*)"Models/jar.obj");
 	Model campana((char*)"Models/camp.obj");
 	Model badajo((char*)"Models/bad.obj");
-	Model cubo((char*)"Models/cubo.obj");
 	Model v1((char*)"Models/ventana1.obj");
 	Model v2((char*)"Models/ventana2.obj");
 	Model v3((char*)"Models/ventana3.obj");
@@ -366,12 +403,13 @@ int main()
 	Model escsup((char*)"Models/escritoriosup.obj");
 	Model most((char*)"Models/mostrador.obj");
 	Model cama((char*)"Models/cama.obj");
-	Model cort((char*)"Models/cortinas.obj");
+	Model cort((char*)"Models/palo.obj");
+	Model cort1((char*)"Models/cortinas1.obj");
+	Model cort2((char*)"Models/cortinas2.obj");
 	Model sillsup((char*)"Models/sillonsup.obj");
 	Model luces((char*)"Models/luces2.obj");
 	Model contra((char*)"Models/contra.obj");
 	Model pisosup((char*)"Models/pisosup.obj");
-
 
 	// First, set the container's VAO (and VBO)
 	GLuint VBO, VAO;
@@ -409,6 +447,7 @@ int main()
 		UpdateWindowsAnimation(); // Actualizar animación de ventanas
 		UpdateBellAnimation(); // Actualizar animación de campana
 		UpdateSignAnimation(); // Actualizar animación de letrero
+		UpdateCortinasAnimation(); // Actualizar animación de cortinas
 
 		// Clear the colorbuffer
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -635,10 +674,34 @@ int main()
 		model = modelTemp;
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		cama.Draw(lightingShader);
-		//cortinas
+		// palo de cortinas
 		model = modelTemp;
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		cort.Draw(lightingShader);
+
+		// === CORTINAS CON ANIMACIÓN DE ESCALA ===
+		// Cortina 1 (escala desde pivote derecho)
+		glm::mat4 cortina1Model = modelTemp;
+		if (cortinasScaleX != 1.0f) {
+			cortina1Model = glm::translate(cortina1Model, CORTINA1_PIVOT);
+			cortina1Model = glm::scale(cortina1Model, glm::vec3(cortinasScaleX, 1.0f, 1.0f));
+			cortina1Model = glm::translate(cortina1Model, -CORTINA1_PIVOT);
+		}
+		model = cortina1Model;
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		cort1.Draw(lightingShader);
+
+		// Cortina 2 (escala desde pivote izquierdo)
+		glm::mat4 cortina2Model = modelTemp;
+		if (cortinasScaleX != 1.0f) {
+			cortina2Model = glm::translate(cortina2Model, CORTINA2_PIVOT);
+			cortina2Model = glm::scale(cortina2Model, glm::vec3(cortinasScaleX, 1.0f, 1.0f));
+			cortina2Model = glm::translate(cortina2Model, -CORTINA2_PIVOT);
+		}
+		model = cortina2Model;
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		cort2.Draw(lightingShader);
+
 		//mostrador
 		model = modelTemp;
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
@@ -668,7 +731,7 @@ int main()
 		model = modelTemp;
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		sillas.Draw(lightingShader);
-	
+
 
 		// === VENTANAS CON ANIMACIÓN ===
 		// Ventana 1 (hacia afuera)
@@ -801,7 +864,7 @@ int main()
 		glDepthMask(GL_TRUE);
 		glDisable(GL_BLEND);
 
-		
+
 
 		//Vidrio de las lamparas
 		glEnable(GL_BLEND);
@@ -816,6 +879,7 @@ int main()
 
 		glDepthMask(GL_TRUE);
 		glDisable(GL_BLEND);
+
 		//vidrio (de la fachada - SIN animación de puerta)
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -945,6 +1009,17 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
 					std::cout << "Animación de letrero INICIADA" << std::endl;
 					std::cout << "Estado actual: " << (showSign1 ? "OPEN" : "CLOSED") << std::endl;
 					std::cout << "Cambiando a: " << (!showSign1 ? "OPEN" : "CLOSED") << " después de la animación" << std::endl;
+				}
+			}
+
+			// Tecla N para toggle abrir/cerrar cortinas
+			if (key == GLFW_KEY_N) {
+				cortinasAnimationActive = true;
+				if (cortinasAreScaled) {
+					std::cout << "Cerrando cortinas..." << std::endl;
+				}
+				else {
+					std::cout << "Abriendo cortinas..." << std::endl;
 				}
 			}
 		}
