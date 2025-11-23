@@ -1,0 +1,75 @@
+# Blender 4.2.3 LTS MTL File: 'GasStoveWithOven.blend'
+# www.blender.org
+
+newmtl Aluminium
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 3
+map_Kd TCom_OldAluminium_Worn_1K_albedo.tif
+map_Ns TCom_OldAluminium_Worn_1K_roughness.tif
+map_Bump -bm 1.000000 TCom_OldAluminium_Worn_1K_normal.tif
+
+newmtl BrushedAluminium
+Ns 360.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Chrome
+Ns 722.500000
+Ka 1.000000 1.000000 1.000000
+Kd 0.650005 0.650005 0.650005
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+
+newmtl GlassA
+Ns 360.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Metal
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 3
+map_Kd Metal029_2K_Color.jpg
+map_Ns Metal029_2K_Roughness.jpg
+map_Bump -bm 1.000000 Metal029_2K_Normal.jpg
+
+newmtl Steel
+Ns 360.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Stove_Panels
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 3
+map_Kd Panels.jpg
+map_Ns Panels_Roughness.jpg
+map_Bump -bm 1.000000 Panels_NM.jpg
